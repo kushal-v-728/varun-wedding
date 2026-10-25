@@ -76,7 +76,33 @@ automatically either way, and no data leaves the page.
 
 ## Deploying
 
-`npm run build` produces a static `dist/` folder — drop it on Netlify, Vercel,
-Cloudflare Pages or GitHub Pages. Because Vite is configured with `base: '/'`,
-deploy at a domain root. For a sub-path (e.g. `user.github.io/wedding/`), set
-`base: '/wedding/'` in `vite.config.ts` and rebuild.
+`npm run build` produces a static `dist/` folder. Vite is configured with
+`base: './'`, so every asset URL is **relative** and the same build works from a
+domain root *and* from a GitHub Pages project sub-path
+(`https://<user>.github.io/<repo>/`).
+
+### GitHub Pages (already set up)
+
+`.github/workflows/deploy.yml` builds the site on every push to `main` or
+`arena/6b825038-varun-wedding` and publishes `dist/` to Pages.
+
+Two things to know, because they are the usual cause of "the page is stuck on a
+logo and nothing works":
+
+1. **Pages must deploy the build, not the source.** In
+   *Settings → Pages → Build and deployment*, **Source** has to be
+   **GitHub Actions**. If it is left on *Deploy from a branch*, GitHub publishes
+   the raw repo (the `index.html` that loads `/src/main.tsx`) and browsers show a
+   blank monogram screen — exactly what a `base: '/'` build plus an unbundled
+   entry looks like.
+2. **Push the workflow file before/with your changes**, then check the
+   *Actions* tab for a green "Deploy to GitHub Pages" run.
+
+If a deploy ever fails to load the bundle, the page now falls back to a plain
+text invitation (names, both timings, address, directions button) after 6
+seconds instead of leaving guests on the splash screen.
+
+### Netlify / Vercel / Cloudflare Pages
+
+Build command `npm run build`, publish directory `dist`. Works at the domain
+root and in a sub-path without changes.
