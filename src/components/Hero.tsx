@@ -1,50 +1,34 @@
+import { useEffect, useRef } from 'react';
 import { wedding } from '../config';
-import { blurData } from '../lib/blur';
-import { blurUrl, imgSrc, imgSrcSet } from '../lib/assets';
+import { useParallaxSetup } from '../lib/parallax';
+import { FramedPhoto } from './Chapter';
 import { ArrowDownIcon, LotusDivider, Mandala, PetalField } from './Ornaments';
 
 export function Hero({ ready }: { ready: boolean }) {
+  const leftRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
+  const washRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => useParallaxSetup(leftRef.current, 72), []);
+  useEffect(() => useParallaxSetup(rightRef.current, -54), []);
+  useEffect(() => useParallaxSetup(washRef.current, 120), []);
+
   return (
     <section className={`hero ${ready ? 'is-ready' : ''}`} id="top">
-      <div className="hero__wash" aria-hidden="true">
+      <div className="hero__wash" aria-hidden="true" ref={washRef}>
         <Mandala className="hero__mandala" />
         <span className="hero__glow hero__glow--one" />
         <span className="hero__glow hero__glow--two" />
       </div>
-      <PetalField count={12} />
-
+      <PetalField count={11} />
       <div className="hero__frame" aria-hidden="true" />
 
-      <div className="container hero__inner">
-        <figure className="hero__figure">
-          <span className="hero__halo" aria-hidden="true" />
-          <div
-            className="arch arch--hero"
-            style={{ backgroundImage: blurUrl(blurData.stand) }}
-          >
-            <img
-              src={imgSrc('stand', 760)}
-              srcSet={imgSrcSet('stand', [420, 760, 1024])}
-              sizes="(max-width: 880px) 88vw, 44vw"
-              width={1024}
-              height={1536}
-              alt="Varun and Kavya in traditional wedding attire against a floral backdrop"
-              fetchPriority="high"
-              decoding="async"
-              className="arch__img"
-              style={{ objectPosition: '50% 20%' }}
-            />
-            <span className="arch__sheen" aria-hidden="true" />
-          </div>
-          <figcaption className="hero__datebadge">
-            <span className="hero__datebadge-label">Save the date</span>
-            <span className="hero__datebadge-date">
-              27<em>.11</em>.2026
-            </span>
-          </figcaption>
-        </figure>
+      <div className="container hero__grid">
+        <div className="hero__side hero__side--left" ref={leftRef}>
+          <FramedPhoto id="seated" frame="arch" priority sizes="(max-width: 1100px) 44vw, 320px" />
+        </div>
 
-        <div className="hero__copy">
+        <div className="hero__center">
           <p className="eyebrow hero__eyebrow">
             <span className="eyebrow__rule" />
             The wedding of
@@ -81,6 +65,10 @@ export function Hero({ ready }: { ready: boolean }) {
           <p className="hero__fullnames">
             {wedding.groom.fullName} <span aria-hidden="true">·</span> {wedding.bride.fullName}
           </p>
+        </div>
+
+        <div className="hero__side hero__side--right" ref={rightRef}>
+          <FramedPhoto id="stand" frame="arch" priority sizes="(max-width: 1100px) 44vw, 320px" />
         </div>
       </div>
 

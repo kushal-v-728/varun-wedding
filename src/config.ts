@@ -106,7 +106,6 @@ export const galleryImages = [
     caption: 'The proposal',
     width: 1024,
     height: 1536,
-    variant: 'tall',
   },
   {
     id: 'embrace',
@@ -116,7 +115,6 @@ export const galleryImages = [
     caption: 'Two of a kind',
     width: 773,
     height: 1024,
-    variant: 'wide',
   },
   {
     id: 'hills',
@@ -126,7 +124,6 @@ export const galleryImages = [
     caption: 'Our kind of day',
     width: 1448,
     height: 1086,
-    variant: 'panorama',
   },
   {
     id: 'stand',
@@ -136,7 +133,6 @@ export const galleryImages = [
     caption: 'Sakhi & Sakha',
     width: 1024,
     height: 1536,
-    variant: 'portrait',
   },
   {
     id: 'pose',
@@ -146,11 +142,15 @@ export const galleryImages = [
     caption: 'Always you',
     width: 766,
     height: 1024,
-    variant: 'portrait',
   },
 ] as const;
 
 export type GalleryImage = (typeof galleryImages)[number];
+
+/** Look a photo up by id — every section references photos this way. */
+export function photoById(id: string): GalleryImage {
+  return galleryImages.find((image) => image.id === id) ?? galleryImages[0];
+}
 
 /** Widths generated for every image in /images. */
 export const imageWidths: Record<string, number[]> = {

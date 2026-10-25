@@ -1,39 +1,38 @@
 import { Hero } from './components/Hero';
 import { Nav } from './components/Nav';
 import { QuickBar } from './components/QuickBar';
-import { Intro } from './components/Intro';
+import { Doors, useDoorIntro } from './components/Doors';
 import { SaveTheDate } from './components/SaveTheDate';
-import { Invitation } from './components/Invitation';
+import { Story } from './components/Story';
 import { Events } from './components/Events';
-import { Gallery } from './components/Gallery';
 import { Blessing } from './components/Blessing';
 import { Venue } from './components/Venue';
 import { Rsvp } from './components/Rsvp';
 import { Footer } from './components/Footer';
-import { useIntro } from './components/Reveal';
+import { LightboxProvider } from './components/Lightbox';
 
 export default function App() {
-  const { ready, hidden } = useIntro();
+  const { opening, done, ready, openNow } = useDoorIntro();
 
   return (
-    <>
-      <Intro opening={ready} hidden={hidden} />
-      <a href="#invitation" className="skip-link">
-        Skip to invitation
+    <LightboxProvider>
+      <Doors opening={opening} done={done} onOpen={openNow} />
+
+      <a href="#story" className="skip-link">
+        Skip to the invitation
       </a>
       <Nav />
       <main id="main">
         <Hero ready={ready} />
         <SaveTheDate />
-        <Invitation />
+        <Story />
         <Events />
         <Blessing />
-        <Gallery />
         <Venue />
         <Rsvp />
       </main>
       <Footer />
       <QuickBar />
-    </>
+    </LightboxProvider>
   );
 }

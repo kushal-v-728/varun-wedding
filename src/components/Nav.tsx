@@ -5,9 +5,8 @@ import { CloseIcon, MenuIcon } from './Ornaments';
 
 const links = [
   { href: '#save-the-date', label: 'Save the date' },
-  { href: '#invitation', label: 'Invitation' },
+  { href: '#story', label: 'Our story' },
   { href: '#events', label: 'Events' },
-  { href: '#gallery', label: 'Gallery' },
   { href: '#venue', label: 'Venue' },
   { href: '#rsvp', label: 'RSVP' },
 ];

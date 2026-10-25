@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { wedding } from '../config';
+import { Chapter } from './Chapter';
 import { ArrowRightIcon, CheckIcon, HeartIcon, WhatsappIcon } from './Ornaments';
 import { Reveal } from './Reveal';
 
@@ -35,9 +36,14 @@ export function Rsvp() {
   };
 
   return (
-    <section className="rsvp" id="rsvp">
+    <Chapter
+      id="rsvp"
+      className="rsvp"
+      left={{ id: 'stand', frame: 'square', drift: 40 }}
+      right={{ id: 'pose', frame: 'oval', drift: -30 }}
+    >
       <div className="rsvp__texture" aria-hidden="true" />
-      <div className="container rsvp__inner">
+      <div className="rsvp__inner">
         <Reveal className="rsvp__copy">
           <p className="eyebrow eyebrow--light">
             <span className="eyebrow__rule" />
@@ -147,6 +153,6 @@ export function Rsvp() {
           )}
         </Reveal>
       </div>
-    </section>
+    </Chapter>
   );
 }

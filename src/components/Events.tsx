@@ -1,14 +1,14 @@
 import { wedding, type WeddingEvent } from '../config';
 import { googleCalendarUrl } from '../lib/calendar';
+import { Chapter } from './Chapter';
 import { CalendarIcon, ClockIcon, PinIcon, RingIcon, SparkleIcon } from './Ornaments';
-import { Reveal } from './Reveal';
 
 function EventCard({ event, index }: { event: WeddingEvent; index: number }) {
   const day = event.dateISO.slice(-2);
   const Icon = event.icon === 'ring' ? RingIcon : SparkleIcon;
 
   return (
-    <Reveal as="article" className={`event event--${index % 2 === 0 ? 'rose' : 'sage'}`} delay={index * 110}>
+    <article className={`event event--${index % 2 === 0 ? 'rose' : 'sage'}`}>
       <span className="event__day" aria-hidden="true">
         {day}
       </span>
@@ -16,8 +16,10 @@ function EventCard({ event, index }: { event: WeddingEvent; index: number }) {
         <span className="event__icon">
           <Icon />
         </span>
-        <p className="event__kicker">{event.kicker}</p>
-        <h3 className="event__title">{event.title}</h3>
+        <div>
+          <p className="event__kicker">{event.kicker}</p>
+          <h3 className="event__title">{event.title}</h3>
+        </div>
       </div>
 
       <dl className="event__meta">
@@ -40,58 +42,53 @@ function EventCard({ event, index }: { event: WeddingEvent; index: number }) {
       <p className="event__blurb">{event.blurb}</p>
 
       <div className="event__actions">
-        <a
-          className="link-underline"
-          href={googleCalendarUrl(event)}
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a className="link-underline" href={googleCalendarUrl(event)} target="_blank" rel="noreferrer">
           Add to calendar
         </a>
         <a className="link-underline" href={wedding.venue.directionsUrl} target="_blank" rel="noreferrer">
           Directions
         </a>
       </div>
-    </Reveal>
+    </article>
   );
 }
 
 export function Events() {
   return (
-    <section className="events section" id="events">
-      <div className="container">
-        <Reveal className="section-head">
-          <p className="eyebrow">
-            <span className="eyebrow__rule" />
-            The celebrations
-            <span className="eyebrow__rule" />
-          </p>
-          <h2 className="section-title">
-            Two days, <em>one promise</em>
-          </h2>
-          <p className="section-sub">
-            We would be honoured to have you with us for both the evening of joy and the
-            sacred morning that follows.
-          </p>
-        </Reveal>
+    <Chapter
+      id="events"
+      left={{ id: 'seated', frame: 'pill', drift: 52, caption: 'The proposal' }}
+      right={{ id: 'embrace', frame: 'oval', drift: -40 }}
+    >
+      <p className="eyebrow">
+        <span className="eyebrow__rule" />
+        The celebrations
+        <span className="eyebrow__rule" />
+      </p>
+      <h2 className="section-title">
+        Two days, <em>one promise</em>
+      </h2>
+      <p className="section-sub">
+        We would be honoured to have you with us for both the evening of joy and the
+        sacred morning that follows.
+      </p>
 
-        <div className="events__grid">
-          {wedding.events.map((event, i) => (
-            <EventCard key={event.id} event={event} index={i} />
-          ))}
-        </div>
-
-        <Reveal className="events__venue" delay={80}>
-          <PinIcon />
-          <span>
-            Both ceremonies take place at <strong>{wedding.venue.name}</strong>,{' '}
-            {wedding.venue.addressLines.join(', ')}
-          </span>
-          <a href="#venue" className="link-underline">
-            View venue
-          </a>
-        </Reveal>
+      <div className="events__stack">
+        {wedding.events.map((event, i) => (
+          <EventCard key={event.id} event={event} index={i} />
+        ))}
       </div>
-    </section>
+
+      <p className="events__venue">
+        <PinIcon />
+        <span>
+          Both ceremonies take place at <strong>{wedding.venue.name}</strong>,{' '}
+          {wedding.venue.addressLines.join(', ')}
+        </span>
+        <a href="#venue" className="link-underline">
+          View venue
+        </a>
+      </p>
+    </Chapter>
   );
 }

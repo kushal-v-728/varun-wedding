@@ -26,16 +26,20 @@ npm run preview   # serve the production build
 
 | Section | What it does |
 | --- | --- |
-| Opening curtain | Ivory panels part to reveal the monogram (once per session, skipped for reduced-motion users) |
-| Hero | Arched Ghibli-style portrait, names, Kannada blessing, date badge |
+| Opening doors | Two ivory panelled doors swing open in 3-D on load, revealing the invitation (tap anywhere to open early; skipped on repeat visits and for reduced-motion users) |
+| Hero | Names centred, the proposal portrait to the left and the couple to the right |
 | Save the date | Live countdown, **Add to calendar** (.ics with both events) and **Share** |
-| Our story | Short note + a printable-looking invitation card |
-| Events | Reception & Muhurtha cards, each with its own Google Calendar link |
-| Blessing band | Kannada shloka with English translation |
-| Gallery | Banner + 4-up grid, keyboard/swipe lightbox |
+| Our story | Note, printable-looking invitation card, photo each side |
+| Events | Reception & Muhurtha cards, portraits flanking them |
+| Blessing band | Full-bleed parallax window over the hills photo, Kannada shloka with translation |
 | Venue | Address, copy-address, Google Maps directions and embedded map |
-| RSVP | Name, which days, number of guests, note → opens WhatsApp with the message pre-filled |
+| RSVP | Name, which days, number of guests, note → opens WhatsApp pre-filled, portraits each side |
 | Footer | Monogram, hashtag, Kannada *swagatha* |
+
+Photographs are never a separate gallery: each one sits in its own frame on the
+left or right of a section, drifting slowly as you scroll, and opens in a
+full-view lightbox when tapped. On phones the two photos of a section dock side
+by side beneath the text.
 
 Phones get a thumb-friendly floating bar (**Directions · Save the date · RSVP**)
 once you scroll past the cover.
@@ -71,8 +75,10 @@ automatically either way, and no data leaves the page.
 - Fonts are self-hosted (Cormorant Garamond, Jost, Noto Sans Kannada),
   preloaded, with `font-display: swap` — no request ever leaves for a font CDN.
 - Measured on a throttled slow-4G mobile profile: **FCP ≈ 0.7 s**, 269 KB total.
-- Animations are transform/opacity only, and all of them collapse under
-  `prefers-reduced-motion: reduce`.
+- Parallax is one shared `requestAnimationFrame` loop that only writes a CSS
+  custom property — no layout thrash, no scroll libraries.
+- Animations are transform/opacity only, and everything (doors, parallax,
+  reveals, petals) collapses under `prefers-reduced-motion: reduce`.
 
 ## Deploying
 
