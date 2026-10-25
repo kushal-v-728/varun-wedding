@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main, arena/6b825038-varun-wedding]
+    branches: [main, 'arena/**']
   workflow_dispatch:
 
 # Allow the workflow to publish to Pages.
@@ -51,6 +51,9 @@ jobs:
 
   deploy:
     needs: build
+    # The github-pages environment only trusts main, so preview branches build
+    # and validate but stay off the live site until the pull request is merged.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

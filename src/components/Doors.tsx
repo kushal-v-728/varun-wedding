@@ -4,16 +4,22 @@ import { Mandala } from './Ornaments';
 
 /**
  * Opening double doors. Each leaf swings outward in 3-D, revealing the
- * invitation behind; tapping anywhere (or the button) opens immediately.
+ * invitation behind.
+ *
+ * The cover doubles as the sound prompt: browsers refuse to start audio unless
+ * a real tap happens, so the guest chooses "with music" or "without". That tap
+ * is the permission — there is no browser dialog to trigger instead.
  */
 export function Doors({
   opening,
   done,
-  onOpen,
+  onOpenWithMusic,
+  onOpenSilent,
 }: {
   opening: boolean;
   done: boolean;
-  onOpen: () => void;
+  onOpenWithMusic: () => void;
+  onOpenSilent: () => void;
 }) {
   if (done) return null;
 
@@ -21,7 +27,7 @@ export function Doors({
     <div
       className={`doors ${opening ? 'is-open' : ''}`}
       aria-hidden={opening}
-      onClick={onOpen}
+      onClick={onOpenWithMusic}
     >
       <div className="doors__glow" aria-hidden="true" />
 
@@ -46,17 +52,34 @@ export function Doors({
         <p className="doors__names">
           {wedding.groom.shortName} &amp; {wedding.bride.shortName}
         </p>
-        <button
-          type="button"
-          className="doors__open"
-          onClick={(e) => {
-            // Don't let the tap bubble to the full-screen handler and open twice.
-            e.stopPropagation();
-            onOpen();
-          }}
-        >
-          Open the invitation
-        </button>
+
+        <div className="doors__actions">
+          <button
+            type="button"
+            className="doors__open"
+            onClick={(e) => {
+              // Don't let the tap bubble to the full-screen handler and open twice.
+              e.stopPropagation();
+              onOpenWithMusic();
+            }}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" className="doors__note">
+              <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z" fill="currentColor" />
+            </svg>
+            Open with music
+          </button>
+          <button
+            type="button"
+            className="doors__silent"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenSilent();
+            }}
+          >
+            Open without sound
+          </button>
+        </div>
+
         <p className="doors__hint">Tap anywhere to open</p>
       </div>
     </div>
