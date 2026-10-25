@@ -33,6 +33,16 @@ jobs:
       - name: Build
         run: npm run build
 
+      # If the repo was set up as "Deploy from a branch", that legacy builder
+      # publishes the raw source (index.html + /src/main.tsx) and overwrites
+      # this deployment on every push. Flip the source to GitHub Actions so the
+      # workflow stays authoritative. Harmless no-op when it is already set.
+      - name: Point Pages at GitHub Actions
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh api -X PUT "repos/${{ github.repository }}/pages" -f build_type=workflow
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
