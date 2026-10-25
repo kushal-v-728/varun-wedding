@@ -17,21 +17,23 @@ import { usePageMusic } from './lib/music';
 export default function App() {
   const { opening, done, ready, openedBy, openNow } = useDoorIntro();
   const music = usePageMusic();
-  const [quiet, setQuiet] = useState(false);
+  /** The guest switched the song off on purpose — don't start it behind their back. */
+  const [dismissed, setDismissed] = useState(false);
 
-  // A tap on the doors is the permission, so the song starts right there.
+  // Opening the doors is a tap, and a tap is the permission browsers need, so
+  // the song starts right there. Silence is one tap away on the wave disc.
   const openWithMusic = () => {
     if (music.hasMusic) void music.requestStart();
     openNow();
   };
 
-  const openSilent = () => {
-    setQuiet(true);
-    openNow();
+  const toggleMusic = () => {
+    setDismissed(music.state === 'playing');
+    music.toggle();
   };
 
   // The doors that open on their own (15 s) carry no gesture, so the browser
-  // usually refuses sound. Try anyway — then let the first touch do it.
+  // usually refuses sound. Try anyway — the first touch below will retry.
   useEffect(() => {
     if (!opening || openedBy !== 'timer' || !music.hasMusic) return;
     void music.requestStart();
@@ -39,9 +41,9 @@ export default function App() {
   }, [opening, openedBy]);
 
   // Fallback: once the cover is gone, the first tap/keypress anywhere starts
-  // the song — unless the guest deliberately chose to enter in silence.
+  // the song, unless the guest has already turned it off.
   useEffect(() => {
-    if (!done || quiet || !music.hasMusic) return;
+    if (!done || dismissed || !music.hasMusic) return;
     if (music.state === 'playing' || music.state === 'finished') return;
 
     const types = ['pointerup', 'touchend', 'click', 'keydown'] as const;
@@ -51,16 +53,11 @@ export default function App() {
     };
     types.forEach((t) => document.addEventListener(t, onGesture, options));
     return () => types.forEach((t) => document.removeEventListener(t, onGesture, options));
-  }, [done, quiet, music.hasMusic, music.state, music.requestStart]);
+  }, [done, dismissed, music.hasMusic, music.state, music.requestStart]);
 
   return (
     <LightboxProvider>
-      <Doors
-        opening={opening}
-        done={done}
-        onOpenWithMusic={openWithMusic}
-        onOpenSilent={openSilent}
-      />
+      <Doors opening={opening} done={done} onOpen={openWithMusic} />
 
       <a href="#story" className="skip-link">
         Skip to the invitation
@@ -78,12 +75,7 @@ export default function App() {
       <Footer />
       <QuickBar />
       {music.hasMusic && (
-        <MusicToggle
-          state={music.state}
-          onToggle={music.toggle}
-          hidden={!done}
-          quiet={quiet}
-        />
+        <MusicToggle state={music.state} onToggle={toggleMusic} hidden={!done} />
       )}
     </LightboxProvider>
   );

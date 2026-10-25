@@ -55,11 +55,12 @@ lets guests pause or replay it.
 
 Two browser facts worth knowing: sound that starts **without a tap** is blocked
 by mobile Safari and Chrome, and no website can ask for an "audio permission".
-The doors are therefore the ask — **Open with music** / **Open without sound** —
-and that tap is the permission. If the doors open on their own after 15 s, the
-song is retried and, if refused, the bottom-left control becomes a labelled
-**Play music** pill; the first tap anywhere also starts it. A guest who chose
-silence is never interrupted. Keep the clip around 30–40 seconds and under ~1 MB.
+So the tap that opens the doors is the permission: the song plays from the
+moment the invitation is revealed, and the wave disc in the bottom-left corner
+is the off switch — one tap pauses it, another brings it back. If the doors open
+on their own after 15 s, the song is retried and the first touch anywhere starts
+it; a guest who switched the music off is left alone. Keep the clip around
+30–40 seconds and under ~1 MB.
 
 ## Making it yours — `src/config.ts`
 

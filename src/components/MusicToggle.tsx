@@ -1,33 +1,27 @@
 import type { MusicState } from '../lib/music';
 
 /**
- * The guest's music switch, bottom-left.
- *
- * When the browser blocked the auto-start it grows into a labelled pill that
- * says "Play music" — a visible, obvious tap target instead of a mystery icon.
+ * The wave disc, bottom-left. Music starts with the tap that opens the doors;
+ * this is how a guest who would rather have silence turns it off again.
  */
 export function MusicToggle({
   state,
   onToggle,
   hidden,
-  quiet = false,
 }: {
   state: MusicState;
   onToggle: () => void;
   hidden: boolean;
-  quiet?: boolean;
 }) {
   const playing = state === 'playing';
   const label = playing ? 'Pause music' : state === 'finished' ? 'Play music again' : 'Play music';
-  // Only nag when the song was blocked — a guest who chose silence stays unbothered.
-  const labelled = state === 'blocked' && !quiet;
 
   return (
     <button
       type="button"
       className={`music ${playing ? 'is-playing' : ''} ${
         state === 'blocked' ? 'is-hint' : ''
-      } ${labelled ? 'is-labelled' : ''} ${hidden ? 'is-hidden' : ''}`}
+      } ${hidden ? 'is-hidden' : ''}`}
       onClick={onToggle}
       aria-label={label}
       aria-pressed={playing}
@@ -40,7 +34,6 @@ export function MusicToggle({
         <i />
         <i />
       </span>
-      {labelled && <span className="music__label">Play music</span>}
     </button>
   );
 }
