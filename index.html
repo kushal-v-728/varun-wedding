@@ -86,7 +86,7 @@
          blocked script), replace the monogram splash with the invitation
          details so guests are never left staring at a blank screen. */
       (function () {
-        setTimeout(function () {
+        window.__vkFallback = function () {
           var root = document.getElementById('root');
           if (!root || !root.querySelector('.boot')) return;
           root.innerHTML =
@@ -104,7 +104,8 @@
             'Get directions</a>' +
             '<p style="margin-top:28px;font-size:12px;color:#98876f">If this message stays, please refresh the page.</p>' +
             '</div>';
-        }, 6000);
+        };
+        setTimeout(window.__vkFallback, 6000);
       })();
     </script>
 
@@ -120,6 +121,10 @@
         <p>Please enable JavaScript to view the invitation.</p>
       </div>
     </noscript>
-    <script type="module" src="/src/main.tsx"></script>
+    <script
+      type="module"
+      src="/src/main.tsx"
+      onerror="window.__vkFallback && window.__vkFallback()"
+    ></script>
   </body>
 </html>
