@@ -5,6 +5,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  *
  * Any audio file dropped into `src/assets/audio/` becomes the soundtrack —
  * no code change needed. Delete the file and the player removes itself.
+ *
+ * Browsers only allow sound to begin inside a real tap or keypress, so the
+ * doors ask "open with music?" and the answer is the permission. There is no
+ * browser permission dialog for audio — nothing to request, only a gesture.
  */
 const files = import.meta.glob('../assets/audio/*.{mp3,m4a,ogg,wav}', {
   eager: true,
@@ -16,33 +20,42 @@ export const musicSrc: string = Object.values(files)[0] ?? '';
 
 export type MusicState = 'idle' | 'playing' | 'blocked' | 'finished';
 
-const TARGET_VOLUME = 0.55;
-/** Never let a long file drift on forever — stop shortly after the couple's clip. */
-const HARD_CAP_SECONDS = 40;
+/** Half of the device's own volume — a page can never move the device slider. */
+const TARGET_VOLUME = 0.5;
+
+/**
+ * Safari 16.4+ / iOS 17+ only. Without this, the iPhone ring/silent switch
+ * mutes the song. Everywhere else this is silently ignored.
+ */
+function claimPlaybackSession() {
+  try {
+    const nav = navigator as Navigator & { audioSession?: { type: string } };
+    if (nav.audioSession) nav.audioSession.type = 'playback';
+  } catch {
+    /* older Safari has no Audio Session API */
+  }
+}
 
 export function usePageMusic() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const fadeRef = useRef<number | null>(null);
-  const capRef = useRef<number | null>(null);
+  const startingRef = useRef(false);
   const [state, setState] = useState<MusicState>('idle');
 
-  const clearTimers = () => {
+  const stopFade = () => {
     if (fadeRef.current) window.clearInterval(fadeRef.current);
-    if (capRef.current) window.clearTimeout(capRef.current);
     fadeRef.current = null;
-    capRef.current = null;
   };
 
   const fadeTo = (target: number) => {
     const audio = audioRef.current;
     if (!audio) return;
-    if (fadeRef.current) window.clearInterval(fadeRef.current);
+    stopFade();
     fadeRef.current = window.setInterval(() => {
       const next = audio.volume + (target > audio.volume ? 0.05 : -0.05);
       if (target > audio.volume ? next >= target : next <= target) {
         audio.volume = target;
-        if (fadeRef.current) window.clearInterval(fadeRef.current);
-        fadeRef.current = null;
+        stopFade();
       } else {
         audio.volume = Math.max(0, Math.min(1, next));
       }
@@ -52,36 +65,54 @@ export function usePageMusic() {
   const getAudio = useCallback(() => {
     if (!musicSrc) return null;
     if (!audioRef.current) {
-      const audio = new Audio();
-      audio.src = musicSrc;
+      claimPlaybackSession();
+      const audio = new Audio(musicSrc);
       audio.preload = 'auto';
-      audio.volume = 0;
       audio.loop = false;
+      audio.volume = 0;
+      audio.setAttribute('playsinline', '');
       audio.addEventListener('ended', () => {
-        clearTimers();
+        stopFade();
         setState('finished');
       });
+      audio.load();
       audioRef.current = audio;
     }
     return audioRef.current;
   }, []);
 
-  /** Try to start — browsers may refuse until the guest interacts. */
+  /**
+   * Start the song. Must be called from inside a tap/keypress the first time,
+   * otherwise the browser rejects it and we fall back to the "blocked" state.
+   */
   const requestStart = useCallback(async () => {
     const audio = getAudio();
-    if (!audio) return;
+    if (!audio || startingRef.current) return;
+    // Already running (a global first-touch handler and the button can both
+    // fire for the same tap) — don't restart it from the top.
+    if (!audio.paused) {
+      setState('playing');
+      return;
+    }
+    startingRef.current = true;
+    claimPlaybackSession();
     try {
-      audio.currentTime = 0;
+      // Setting currentTime before metadata arrives throws on Safari.
+      if (audio.readyState > 0) {
+        try {
+          audio.currentTime = 0;
+        } catch {
+          /* not seekable yet — start from wherever it is */
+        }
+      }
+      audio.volume = 0;
       await audio.play();
       setState('playing');
       fadeTo(TARGET_VOLUME);
-      clearTimers();
-      capRef.current = window.setTimeout(() => {
-        audio.pause();
-        setState('finished');
-      }, HARD_CAP_SECONDS * 1000);
     } catch {
       setState('blocked');
+    } finally {
+      startingRef.current = false;
     }
   }, [getAudio]);
 
@@ -90,17 +121,21 @@ export function usePageMusic() {
     if (!audio) return;
     if (state === 'playing') {
       fadeTo(0);
-      window.setTimeout(() => audio.pause(), 300);
-      clearTimers();
+      window.setTimeout(() => audio.pause(), 320);
       setState('idle');
       return;
     }
     void requestStart();
   }, [getAudio, requestStart, state]);
 
+  /** Warm the file up while the doors are still closed, so the tap is instant. */
+  useEffect(() => {
+    getAudio();
+  }, [getAudio]);
+
   useEffect(
     () => () => {
-      clearTimers();
+      stopFade();
       audioRef.current?.pause();
     },
     [],

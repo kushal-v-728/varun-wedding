@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Hero } from './components/Hero';
 import { Nav } from './components/Nav';
 import { QuickBar } from './components/QuickBar';
@@ -17,29 +17,50 @@ import { usePageMusic } from './lib/music';
 export default function App() {
   const { opening, done, ready, openedBy, openNow } = useDoorIntro();
   const music = usePageMusic();
-  const musicStarted = useRef(false);
+  const [quiet, setQuiet] = useState(false);
 
-  // The doors are the cue. A tap counts as permission, so the song starts with
-  // it; when the doors open by themselves the browser usually refuses sound and
-  // the little disc invites a tap instead.
-  useEffect(() => {
-    if (!opening || !music.hasMusic || musicStarted.current) return;
-    musicStarted.current = true;
-    if (openedBy === 'timer') void music.requestStart();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [opening, openedBy]);
-
+  // A tap on the doors is the permission, so the song starts right there.
   const openWithMusic = () => {
-    if (music.hasMusic && !musicStarted.current) {
-      musicStarted.current = true;
-      void music.requestStart();
-    }
+    if (music.hasMusic) void music.requestStart();
     openNow();
   };
 
+  const openSilent = () => {
+    setQuiet(true);
+    openNow();
+  };
+
+  // The doors that open on their own (15 s) carry no gesture, so the browser
+  // usually refuses sound. Try anyway — then let the first touch do it.
+  useEffect(() => {
+    if (!opening || openedBy !== 'timer' || !music.hasMusic) return;
+    void music.requestStart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [opening, openedBy]);
+
+  // Fallback: once the cover is gone, the first tap/keypress anywhere starts
+  // the song — unless the guest deliberately chose to enter in silence.
+  useEffect(() => {
+    if (!done || quiet || !music.hasMusic) return;
+    if (music.state === 'playing' || music.state === 'finished') return;
+
+    const types = ['pointerup', 'touchend', 'click', 'keydown'] as const;
+    const options: AddEventListenerOptions = { capture: true, passive: true };
+    const onGesture = () => {
+      void music.requestStart();
+    };
+    types.forEach((t) => document.addEventListener(t, onGesture, options));
+    return () => types.forEach((t) => document.removeEventListener(t, onGesture, options));
+  }, [done, quiet, music.hasMusic, music.state, music.requestStart]);
+
   return (
     <LightboxProvider>
-      <Doors opening={opening} done={done} onOpen={openWithMusic} />
+      <Doors
+        opening={opening}
+        done={done}
+        onOpenWithMusic={openWithMusic}
+        onOpenSilent={openSilent}
+      />
 
       <a href="#story" className="skip-link">
         Skip to the invitation
@@ -57,7 +78,12 @@ export default function App() {
       <Footer />
       <QuickBar />
       {music.hasMusic && (
-        <MusicToggle state={music.state} onToggle={music.toggle} hidden={!done} />
+        <MusicToggle
+          state={music.state}
+          onToggle={music.toggle}
+          hidden={!done}
+          quiet={quiet}
+        />
       )}
     </LightboxProvider>
   );
