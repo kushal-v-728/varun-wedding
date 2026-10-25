@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main, arena/6b825038-varun-wedding]
+    branches: [main, 'arena/**']
   workflow_dispatch:
 
 # Allow the workflow to publish to Pages.
