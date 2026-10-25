@@ -38,7 +38,7 @@ export function Nav() {
             <span className="nav__monogram">{wedding.monogram}</span>
             <span className="nav__brandtext">
               {wedding.groom.shortName} &amp; {wedding.bride.shortName}
-              <em>27 · 11 · 2026</em>
+              <em>25 – 27 · 11 · 2026</em>
             </span>
           </a>
 

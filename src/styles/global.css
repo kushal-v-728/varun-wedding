@@ -51,6 +51,10 @@
   --gold-pale: #f3e7cb;
   --sage: #4f6b56;
   --sage-deep: #32453a;
+  --haldi: #b07d13;
+  --haldi-pale: #f7ecc9;
+  --mehandi: #a63a63;
+  --mehandi-pale: #f7e2ea;
 
   --line: rgba(126, 31, 53, 0.14);
   --line-gold: rgba(194, 154, 75, 0.35);
@@ -1515,6 +1519,22 @@ fieldset {
 .event--sage {
   color: var(--sage);
 }
+.event--haldi {
+  color: var(--haldi);
+  border-color: rgba(176, 125, 19, 0.22);
+  background: linear-gradient(170deg, #fffdf7, #fbf2d9);
+}
+.event--mehandi {
+  color: var(--mehandi);
+  border-color: rgba(166, 58, 99, 0.2);
+  background: linear-gradient(170deg, #fffdf9, #fbeef2);
+}
+.event--haldi .event__icon {
+  background: rgba(247, 236, 201, 0.7);
+}
+.event--mehandi .event__icon {
+  background: rgba(247, 226, 234, 0.75);
+}
 .event__day {
   position: absolute;
   right: 10px;
@@ -1597,6 +1617,42 @@ fieldset {
   color: var(--ink-soft);
   line-height: 1.75;
 }
+.event__dress {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 7px 14px 7px 11px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  background: rgba(255, 253, 248, 0.65);
+}
+.event__dress svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  color: currentColor;
+}
+.event__dress span {
+  color: var(--ink-faint);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.event__dress strong {
+  margin-left: 6px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--ink);
+}
 .event__actions {
   position: relative;
   z-index: 1;
@@ -1605,28 +1661,75 @@ fieldset {
   gap: 22px;
   margin-top: 20px;
 }
-.events__venue {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 10px 14px;
+.events__venues {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
   margin-top: clamp(24px, 3.2vw, 34px);
   padding-top: 18px;
   border-top: 1px solid var(--line);
+  text-align: center;
   font-size: 12.5px;
   color: var(--ink-soft);
   line-height: 1.7;
 }
-.events__venue svg {
-  width: 18px;
-  height: 18px;
+.events__venues p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px 9px;
+  max-width: 52ch;
+}
+.events__venues svg {
+  width: 16px;
+  height: 16px;
   color: var(--gold);
   flex: none;
+  transform: translateY(2px);
 }
-.events__venue strong {
+.events__venues strong {
   font-weight: 500;
   color: var(--ink);
+}
+
+/* The couple's celebration card, kept inside the events chapter. */
+.events__card {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  width: min(100%, 430px);
+  margin: clamp(26px, 3.4vw, 38px) auto 0;
+  text-decoration: none;
+}
+.events__card img {
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  border: 1px solid rgba(194, 154, 75, 0.45);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+.events__card:hover img {
+  transform: translateY(-4px) rotate(-0.6deg);
+  box-shadow: 0 40px 80px -44px rgba(58, 36, 24, 0.55);
+}
+.events__card-caption {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.events__card-caption em {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--gold);
 }
 
 /* ── Parallax photo band ────────────────────────────────────── */
@@ -1763,6 +1866,56 @@ fieldset {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 22px;
+}
+.venue__tag {
+  margin-top: 16px;
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.venue__tag + .venue__name {
+  margin-top: 8px;
+}
+.venue__name span {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.venue__extra {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: clamp(16px, 2.4vw, 26px);
+  margin-top: clamp(18px, 2.6vw, 30px);
+  padding: clamp(22px, 2.8vw, 32px);
+  text-align: left;
+  background: linear-gradient(170deg, #fffdf9, #fbf4e7);
+  border: 1px solid rgba(126, 31, 53, 0.12);
+  border-radius: 22px;
+  box-shadow: var(--shadow-soft);
+}
+.venue__extra-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.venue__extra-head .venue__tag {
+  margin-top: 0;
+}
+.venue__extra .venue__name {
+  margin-top: 14px;
+}
+.venue__extra .venue__actions {
+  margin-top: 0;
+  justify-content: flex-end;
+}
+.venue__extra .venue__name {
+  font-size: clamp(1.4rem, 2.4vw, 1.85rem);
 }
 .venue__note {
   margin-top: 24px;
@@ -2537,6 +2690,14 @@ fieldset {
   .venue__map-frame iframe {
     min-height: 320px;
   }
+  .venue__extra {
+    grid-template-columns: 1fr;
+  }
+  .venue__extra .venue__actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    margin-top: 18px;
+  }
 }
 
 @media (max-width: 760px) {
@@ -2641,6 +2802,27 @@ fieldset {
   }
   .event {
     padding: 22px 18px;
+  }
+  .venue__extra {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+  .venue__extra .venue__icon {
+    width: 40px;
+    height: 40px;
+  }
+  .venue__extra-head {
+    gap: 12px;
+  }
+  .venue__extra .venue__actions {
+    width: 100%;
+  }
+  .events__card {
+    width: 100%;
+  }
+  .event__dress {
+    width: 100%;
+    justify-content: flex-start;
   }
   .venue__actions {
     flex-direction: column;

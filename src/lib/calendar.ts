@@ -1,4 +1,4 @@
-import { wedding, type WeddingEvent } from '../config';
+import { venueOf, wedding, type WeddingEvent } from '../config';
 
 /** RFC5545 date string in the couple's timezone (IST). */
 function toICSDate(iso: string) {
@@ -46,7 +46,7 @@ export function buildICS(events: readonly WeddingEvent[]) {
       `DTSTART;TZID=Asia/Kolkata:${toICSDate(ev.start)}`,
       `DTEND;TZID=Asia/Kolkata:${toICSDate(ev.end)}`,
       fold(`SUMMARY:${escapeICS(`${ev.title} — Varun & Kavya`)}`),
-      fold(`LOCATION:${escapeICS(wedding.venue.address)}`),
+      fold(`LOCATION:${escapeICS(venueOf(ev).address)}`),
       fold(
         `DESCRIPTION:${escapeICS(
           `${ev.kicker} ${ev.title}. ${ev.dateLabel}, ${ev.timeLabel}. ${wedding.hashtag}`,
@@ -77,14 +77,24 @@ export function downloadICS(events: readonly WeddingEvent[], filename = 'varun-k
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
+/** Google wants UTC stamps (trailing Z); `ctz` handles the display timezone. */
+function toGoogleDate(iso: string) {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return (
+    `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}` +
+    `T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`
+  );
+}
+
 export function googleCalendarUrl(ev: WeddingEvent) {
   const params = new URLSearchParams({
     action: 'TEMPLATE',
     text: `${ev.title} — Varun & Kavya`,
-    dates: `${toICSDate(ev.start)}/${toICSDate(ev.end)}`,
+    dates: `${toGoogleDate(ev.start)}/${toGoogleDate(ev.end)}`,
     ctz: 'Asia/Kolkata',
     details: `${ev.kicker} ${ev.title}. ${wedding.hashtag}`,
-    location: wedding.venue.address,
+    location: venueOf(ev).address,
   });
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }

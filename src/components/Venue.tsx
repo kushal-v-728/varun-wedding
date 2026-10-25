@@ -4,17 +4,19 @@ import { CheckIcon, CopyIcon, LotusDivider, PinIcon } from './Ornaments';
 import { Reveal } from './Reveal';
 
 export function Venue() {
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState('');
 
-  const copyAddress = async () => {
+  const copyAddress = async (key: string, name: string, address: string) => {
     try {
-      await navigator.clipboard.writeText(`${wedding.venue.name}, ${wedding.venue.address}`);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2200);
+      await navigator.clipboard.writeText(`${name}, ${address}`);
+      setCopied(key);
+      window.setTimeout(() => setCopied(''), 2200);
     } catch {
       /* clipboard blocked — the address is visible anyway */
     }
   };
+
+  const ashoka = wedding.venues.ashoka;
 
   return (
     <section className="venue section" id="venue">
@@ -22,7 +24,7 @@ export function Venue() {
         <Reveal className="section-head">
           <p className="eyebrow">
             <span className="eyebrow__rule" />
-            The venue
+            The venues
             <span className="eyebrow__rule" />
           </p>
           <h2 className="section-title">
@@ -36,6 +38,7 @@ export function Venue() {
             <span className="venue__icon">
               <PinIcon />
             </span>
+            <p className="venue__tag">Reception &amp; Muhurtha</p>
             <h3 className="venue__name">{wedding.venue.name}</h3>
             <p className="venue__address">
               {wedding.venue.addressLines.map((line) => (
@@ -52,17 +55,21 @@ export function Venue() {
               >
                 Get directions
               </a>
-              <button type="button" className="btn btn--line" onClick={copyAddress}>
-                {copied ? <CheckIcon /> : <CopyIcon />}
-                {copied ? 'Address copied' : 'Copy address'}
+              <button
+                type="button"
+                className="btn btn--line"
+                onClick={() => copyAddress('main', wedding.venue.name, wedding.venue.address)}
+              >
+                {copied === 'main' ? <CheckIcon /> : <CopyIcon />}
+                {copied === 'main' ? 'Address copied' : 'Copy address'}
               </button>
             </div>
 
             <div className="venue__note">
               <p>
                 <strong>Good to know</strong>
-                Both the reception and the muhurtha are held at this venue, in Chitradurga town —
-                about 200 km from Bengaluru on NH-48.
+                The reception and the muhurtha are held here, in Chitradurga town — about 200 km
+                from Bengaluru on NH-48.
               </p>
             </div>
           </Reveal>
@@ -98,6 +105,38 @@ export function Venue() {
             </div>
           </Reveal>
         </div>
+
+        <Reveal className="venue__extra" delay={80}>
+          <div className="venue__extra-text">
+            <div className="venue__extra-head">
+              <span className="venue__icon">
+                <PinIcon />
+              </span>
+              <p className="venue__tag">Haldi &amp; Mehandi / Sangeeth · 25 November</p>
+            </div>
+            <h3 className="venue__name">
+              {ashoka.name} <span>{ashoka.subtitle}</span>
+            </h3>
+            <p className="venue__address">
+              {ashoka.addressLines.map((line) => (
+                <span key={line}>{line}</span>
+              ))}
+            </p>
+          </div>
+          <div className="venue__actions">
+            <a className="btn btn--solid" href={ashoka.directionsUrl} target="_blank" rel="noreferrer">
+              Get directions
+            </a>
+            <button
+              type="button"
+              className="btn btn--line"
+              onClick={() => copyAddress('ashoka', ashoka.name, ashoka.address)}
+            >
+              {copied === 'ashoka' ? <CheckIcon /> : <CopyIcon />}
+              {copied === 'ashoka' ? 'Address copied' : 'Copy address'}
+            </button>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

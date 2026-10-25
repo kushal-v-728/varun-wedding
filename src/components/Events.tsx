@@ -1,14 +1,31 @@
-import { wedding, type WeddingEvent } from '../config';
+import { wedding, type WeddingEvent, venueOf } from '../config';
 import { googleCalendarUrl } from '../lib/calendar';
 import { Chapter } from './Chapter';
-import { CalendarIcon, ClockIcon, PinIcon, RingIcon, SparkleIcon } from './Ornaments';
+import {
+  CalendarIcon,
+  ClockIcon,
+  DressIcon,
+  MehndiIcon,
+  PinIcon,
+  RingIcon,
+  SparkleIcon,
+  SunIcon,
+} from './Ornaments';
 
-function EventCard({ event, index }: { event: WeddingEvent; index: number }) {
+const ICONS = {
+  sun: SunIcon,
+  mehandi: MehndiIcon,
+  sparkle: SparkleIcon,
+  ring: RingIcon,
+} as const;
+
+function EventCard({ event }: { event: WeddingEvent }) {
   const day = event.dateISO.slice(-2);
-  const Icon = event.icon === 'ring' ? RingIcon : SparkleIcon;
+  const Icon = ICONS[event.icon];
+  const venue = venueOf(event);
 
   return (
-    <article className={`event event--${index % 2 === 0 ? 'rose' : 'sage'}`}>
+    <article className={`event event--${event.tone}`}>
       <span className="event__day" aria-hidden="true">
         {day}
       </span>
@@ -37,15 +54,34 @@ function EventCard({ event, index }: { event: WeddingEvent; index: number }) {
           </dt>
           <dd>{event.timeLabel}</dd>
         </div>
+        <div>
+          <dt>
+            <PinIcon />
+            <span className="sr-only">Venue</span>
+          </dt>
+          <dd>
+            {venue.name}
+            {venue.id === 'ashoka' ? ` · ${venue.subtitle}` : ''}
+          </dd>
+        </div>
       </dl>
 
       <p className="event__blurb">{event.blurb}</p>
+
+      {event.dressCode && (
+        <p className="event__dress">
+          <DressIcon />
+          <span>
+            Dress code <strong>{event.dressCode}</strong>
+          </span>
+        </p>
+      )}
 
       <div className="event__actions">
         <a className="link-underline" href={googleCalendarUrl(event)} target="_blank" rel="noreferrer">
           Add to calendar
         </a>
-        <a className="link-underline" href={wedding.venue.directionsUrl} target="_blank" rel="noreferrer">
+        <a className="link-underline" href={venue.directionsUrl} target="_blank" rel="noreferrer">
           Directions
         </a>
       </div>
@@ -54,6 +90,8 @@ function EventCard({ event, index }: { event: WeddingEvent; index: number }) {
 }
 
 export function Events() {
+  const card = wedding.celebrationCard;
+
   return (
     <Chapter
       id="events"
@@ -66,29 +104,59 @@ export function Events() {
         <span className="eyebrow__rule" />
       </p>
       <h2 className="section-title">
-        Two days, <em>one promise</em>
+        Three days, <em>one promise</em>
       </h2>
       <p className="section-sub">
-        We would be honoured to have you with us for both the evening of joy and the
-        sacred morning that follows.
+        Haldi and mehandi under the open sky, then the evening of joy and the sacred morning
+        that follows. We would be honoured to have you with us for all of it.
       </p>
 
       <div className="events__stack">
-        {wedding.events.map((event, i) => (
-          <EventCard key={event.id} event={event} index={i} />
+        {wedding.events.map((event) => (
+          <EventCard key={event.id} event={event} />
         ))}
       </div>
 
-      <p className="events__venue">
-        <PinIcon />
-        <span>
-          Both ceremonies take place at <strong>{wedding.venue.name}</strong>,{' '}
-          {wedding.venue.addressLines.join(', ')}
+      <a
+        className="events__card"
+        href={`${import.meta.env.BASE_URL}images/${card.src}.webp`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <img
+          src={`${import.meta.env.BASE_URL}images/${card.src}.webp`}
+          alt={card.alt}
+          width={820}
+          height={1230}
+          loading="lazy"
+          decoding="async"
+        />
+        <span className="events__card-caption">
+          {card.caption}
+          <em>Tap to open</em>
         </span>
+      </a>
+
+      <div className="events__venues">
+        <p>
+          <PinIcon />
+          <span>
+            <strong>25 November</strong> — {wedding.venues.ashoka.name} ({wedding.venues.ashoka.subtitle}),{' '}
+            {wedding.venues.ashoka.addressLines.join(', ')}
+          </span>
+        </p>
+        <p>
+          <PinIcon />
+          <span>
+            <strong>26 &amp; 27 November</strong> — {wedding.venue.name},{' '}
+            {wedding.venue.addressLines.join(', ')}
+          </span>
+        </p>
         <a href="#venue" className="link-underline">
-          View venue
+          View both venues
         </a>
-      </p>
+      </div>
+
     </Chapter>
   );
 }

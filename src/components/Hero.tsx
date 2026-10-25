@@ -48,7 +48,7 @@ export function Hero({ ready }: { ready: boolean }) {
           <LotusDivider className="hero__divider" />
 
           <p className="hero__meta">
-            <span>26 &amp; 27 November 2026</span>
+            <span>25 – 27 November 2026</span>
             <span className="hero__meta-dot" aria-hidden="true" />
             <span>Chitradurga, Karnataka</span>
           </p>
