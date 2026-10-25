@@ -95,7 +95,7 @@ export function Rsvp() {
                   name="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Ananya Rao"
+                  placeholder="Ananya T K"
                   autoComplete="name"
                   required
                 />

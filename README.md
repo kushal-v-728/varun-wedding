@@ -26,7 +26,7 @@ npm run preview   # serve the production build
 
 | Section | What it does |
 | --- | --- |
-| Opening doors | Two ivory panelled doors swing open in 3-D on load, revealing the invitation (tap anywhere to open early; skipped on repeat visits and for reduced-motion users) |
+| Opening doors | Two ivory panelled doors swing open in 3-D on every page load and dissolve into the hero. Opens by itself after 15 s, or instantly on a tap. Skipped for reduced-motion guests |
 | Hero | Names centred, the proposal portrait to the left and the couple to the right |
 | Save the date | Live countdown, **Add to calendar** (.ics with both events) and **Share** |
 | Our story | Note, printable-looking invitation card, photo each side |
@@ -45,6 +45,19 @@ Phones get a thumb-friendly floating bar (**Directions · Save the date · RSVP*
 once you scroll past the cover.
 
 ---
+
+## Adding the music
+
+Drop **one** audio file into `src/assets/audio/` (mp3, m4a, ogg or wav) — it is
+picked up automatically, no code change. It starts as the doors swing open,
+fades in, and stops when the track ends. A small disc in the bottom-left corner
+lets guests pause or replay it.
+
+Two browser facts worth knowing: sound that starts **without a tap** is blocked
+by mobile Safari and Chrome, so when the doors open on their own the music may
+wait for the guest — the disc then pulses with a "Tap for music" hint. When a
+guest taps the doors, the music starts immediately because that tap is
+permission. Keep the clip around 30–40 seconds and under ~1 MB.
 
 ## Making it yours — `src/config.ts`
 

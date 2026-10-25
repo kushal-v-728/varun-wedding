@@ -46,27 +46,42 @@ export function Doors({
         <p className="doors__names">
           {wedding.groom.shortName} &amp; {wedding.bride.shortName}
         </p>
-        <button type="button" className="doors__open" onClick={onOpen}>
+        <button
+          type="button"
+          className="doors__open"
+          onClick={(e) => {
+            // Don't let the tap bubble to the full-screen handler and open twice.
+            e.stopPropagation();
+            onOpen();
+          }}
+        >
           Open the invitation
         </button>
+        <p className="doors__hint">Tap anywhere to open</p>
       </div>
     </div>
   );
 }
 
 /**
- * Sequencing for the door reveal. Skipped entirely on repeat visits within a
- * session and for guests who ask for reduced motion.
+ * Sequencing for the door reveal.
+ *
+ * The doors play on every page load (that is the whole point of the cover),
+ * then swing open on their own after fifteen seconds — or immediately when a
+ * guest taps. Guests who ask for reduced motion skip straight to the invitation.
  */
-export function useDoorIntro(autoOpenAfter = 2400, swingTime = 1500) {
+export function useDoorIntro(autoOpenAfter = 15000, swingTime = 2700) {
   const [opening, setOpening] = useState(false);
   const [done, setDone] = useState(false);
   const [ready, setReady] = useState(false);
+  /** 'timer' when the doors opened themselves, 'guest' when someone tapped. */
+  const [openedBy, setOpenedBy] = useState<'timer' | 'guest' | null>(null);
   const timers = useRef<number[]>([]);
 
   const unlock = () => document.documentElement.classList.remove('intro-lock');
 
-  const begin = useCallback(() => {
+  const begin = useCallback((source: 'timer' | 'guest') => {
+    setOpenedBy(source);
     setOpening(true);
     setReady(true);
     timers.current.push(
@@ -75,23 +90,12 @@ export function useDoorIntro(autoOpenAfter = 2400, swingTime = 1500) {
         unlock();
       }, swingTime),
     );
-    try {
-      sessionStorage.setItem('vk-doors-seen', '1');
-    } catch {
-      /* private mode */
-    }
   }, [swingTime]);
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let seen = false;
-    try {
-      seen = sessionStorage.getItem('vk-doors-seen') === '1';
-    } catch {
-      /* private mode */
-    }
 
-    if (reduced || seen) {
+    if (reduced) {
       setOpening(true);
       setReady(true);
       setDone(true);
@@ -99,7 +103,7 @@ export function useDoorIntro(autoOpenAfter = 2400, swingTime = 1500) {
     }
 
     document.documentElement.classList.add('intro-lock');
-    const timer = window.setTimeout(begin, autoOpenAfter);
+    const timer = window.setTimeout(() => begin('timer'), autoOpenAfter);
     const local = timers.current;
     return () => {
       window.clearTimeout(timer);
@@ -112,8 +116,8 @@ export function useDoorIntro(autoOpenAfter = 2400, swingTime = 1500) {
     if (opening) return;
     timers.current.forEach((id) => window.clearTimeout(id));
     timers.current = [];
-    begin();
+    begin('guest');
   }, [begin, opening]);
 
-  return { opening, done, ready, openNow };
+  return { opening, done, ready, openedBy, openNow };
 }
