@@ -1,7 +1,8 @@
 # Varun & Kavya — Wedding Invitation
 
-A single-page wedding invitation for **Varun T K** & **Kavya M** — Reception on
-**26 Nov 2026** and Muhurtha on **27 Nov 2026** at Kammareddy Samudaya Bhavana,
+A single-page wedding invitation for **Varun T K** & **Kavya M** — Haldi and
+Mehandi & Sangeeth on **25 Nov 2026** at Ashoka Garden, then the Reception on
+**26 Nov** and Muhurtha on **27 Nov 2026** at Kammareddy Samudaya Bhavana,
 Chitradurga.
 
 Built with **React 19 + Vite + TypeScript**. No UI framework, no animation
@@ -28,11 +29,11 @@ npm run preview   # serve the production build
 | --- | --- |
 | Opening doors | Two ivory panelled doors swing open in 3-D on every page load and dissolve into the hero. Opens by itself after 15 s, or instantly on a tap. Skipped for reduced-motion guests |
 | Hero | Names centred, the proposal portrait to the left and the couple to the right |
-| Save the date | Live countdown, **Add to calendar** (.ics with both events) and **Share** |
+| Save the date | Live countdown, **Add to calendar** (.ics with all four events) and **Share** |
 | Our story | Note, printable-looking invitation card, photo each side |
-| Events | Reception & Muhurtha cards, portraits flanking them |
+| Events | Haldi, Mehandi & Sangeeth, Reception and Muhurtha cards — each with its own venue, dress code, calendar link and directions — plus the couple's celebration card and a both-venues summary |
 | Blessing band | Full-bleed parallax window over the hills photo, Kannada shloka with translation |
-| Venue | Address, copy-address, Google Maps directions and embedded map |
+| Venue | Kammareddy Samudaya Bhavana with copy-address, directions and embedded map, then an Ashoka Garden card for the 25 November celebrations |
 | RSVP | Name, which days, number of guests, note → opens WhatsApp pre-filled, portraits each side |
 | Footer | Monogram, hashtag, Kannada *swagatha* |
 

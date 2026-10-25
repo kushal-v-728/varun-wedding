@@ -1,4 +1,4 @@
-import { wedding } from '../config';
+import { eventById, wedding } from '../config';
 import { useCountdown } from '../lib/hooks';
 import { downloadICS } from '../lib/calendar';
 import { CalendarIcon, Mandala, ShareIcon } from './Ornaments';
@@ -14,13 +14,14 @@ const labels = [
 
 export function SaveTheDate() {
   const time = useCountdown(wedding.countdownTo);
+  const muhurtha = eventById('muhurtha');
   const [shared, setShared] = useState(false);
 
   const share = async () => {
     const url = window.location.href;
     const data = {
       title: `${wedding.groom.shortName} & ${wedding.bride.shortName} — Wedding`,
-      text: `We're getting married! Join us on 26–27 November 2026 in Chitradurga. ${wedding.hashtag}`,
+      text: `We're getting married! Join us from 25–27 November 2026 in Chitradurga. ${wedding.hashtag}`,
       url,
     };
     try {
@@ -50,7 +51,7 @@ export function SaveTheDate() {
             Counting down to <em>forever</em>
           </h2>
           <p className="save__sub">
-            {wedding.events[1].dateLabel} · {wedding.events[1].timeLabel}
+            {muhurtha.dateLabel} · {muhurtha.timeLabel}
           </p>
         </Reveal>
 

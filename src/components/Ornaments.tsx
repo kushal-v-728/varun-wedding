@@ -133,6 +133,39 @@ export function SparkleIcon(props: IconProps) {
   );
 }
 
+/** Haldi — a sun with soft rays. */
+export function SunIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="12" cy="12" r="4.2" />
+      <path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6" />
+    </svg>
+  );
+}
+
+/** Mehandi — an open hand with henna dots. */
+export function MehndiIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M8.6 20.5h5.8c2.4 0 4.3-1.9 4.3-4.2v-3.1a1.5 1.5 0 0 0-3 0v1.1" />
+      <path d="M8.6 20.5c-2.2-.7-3.7-2.6-3.7-4.9v-4.7a1.5 1.5 0 0 1 3 0v3.9" />
+      <path d="M11.4 14.4V6.9a1.5 1.5 0 0 1 3 0v6.6" />
+      <path d="M14.4 13.3V8.4a1.5 1.5 0 0 1 3 0v6" />
+      <circle cx="11.8" cy="11.4" r="0.45" fill="currentColor" stroke="none" />
+      <circle cx="13.1" cy="12.6" r="0.45" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+/** Dress code — a little shirt. */
+export function DressIcon(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M9.3 4.4 4.9 6.7l1.5 3.2 2-.9v10.4h7.2V9l2 .9 1.5-3.2-4.4-2.3a3.6 3.6 0 0 1-5.4 0Z" />
+    </svg>
+  );
+}
+
 export function RingIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>

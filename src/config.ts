@@ -5,8 +5,47 @@
  * ─────────────────────────────────────────────────────────────
  */
 
-const VENUE_ADDRESS =
+const MAIN_ADDRESS =
   'Kammareddy Samudaya Bhavana, Turuvanuru Road, NH Service Rd, Bank Colony, Chitradurga, Karnataka 577501';
+
+const ASHOKA_ADDRESS =
+  'Ashoka Garden (Open lawn convention), Alexander layout, 1st Cross Rd, near Badavane police station, Bank Colony, Chitradurga, Karnataka 577501';
+
+/** Map links built from the address, so every button lands on the right pin. */
+function withMaps(address: string) {
+  return {
+    address,
+    directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(address),
+    mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address),
+    embedUrl:
+      'https://maps.google.com/maps?q=' +
+      encodeURIComponent(address) +
+      '&t=&z=15&ie=UTF8&iwloc=&output=embed',
+  };
+}
+
+export const venues = {
+  main: {
+    id: 'main',
+    name: 'Kammareddy Samudaya Bhavana',
+    subtitle: 'The wedding venue',
+    addressLines: ['Turuvanuru Road, NH Service Rd, Bank Colony', 'Chitradurga, Karnataka 577501'],
+    ...withMaps(MAIN_ADDRESS),
+  },
+  ashoka: {
+    id: 'ashoka',
+    name: 'Ashoka Garden',
+    subtitle: 'Open lawn convention',
+    addressLines: [
+      'Alexander layout, 1st Cross Rd, near Badavane police station',
+      'Bank Colony, Chitradurga, Karnataka 577501',
+    ],
+    ...withMaps(ASHOKA_ADDRESS),
+  },
+} as const;
+
+export type Venue = (typeof venues)[keyof typeof venues];
+export type VenueId = keyof typeof venues;
 
 export const wedding = {
   hashtag: '#VarunWedsKavya',
@@ -32,24 +71,43 @@ export const wedding = {
 
   blessingTranslation: 'May all beings be happy',
 
-  venue: {
-    name: 'Kammareddy Samudaya Bhavana',
-    addressLines: [
-      'Turuvanuru Road, NH Service Rd, Bank Colony',
-      'Chitradurga, Karnataka 577501',
-    ],
-    address: VENUE_ADDRESS,
-    // Built from the address so the buttons always land on the right pin.
-    directionsUrl:
-      'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(VENUE_ADDRESS),
-    mapUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(VENUE_ADDRESS),
-    embedUrl:
-      'https://maps.google.com/maps?q=' +
-      encodeURIComponent(VENUE_ADDRESS) +
-      '&t=&z=15&ie=UTF8&iwloc=&output=embed',
-  },
+  /** The wedding venue — reception and muhurtha. */
+  venue: venues.main,
+  venues,
 
   events: [
+    {
+      id: 'haldi',
+      kicker: 'A morning in yellow',
+      title: 'Haldi',
+      dateLabel: 'Wednesday, 25 November 2026',
+      dateISO: '2026-11-25',
+      timeLabel: '11:30 AM onwards',
+      start: '2026-11-25T11:30:00+05:30',
+      end: '2026-11-25T15:00:00+05:30',
+      blurb:
+        'Turmeric, marigolds and a lot of laughter. Come dressed in yellow and ready to be coloured happy.',
+      dressCode: 'Yellow',
+      venueId: 'ashoka' as const,
+      icon: 'sun' as const,
+      tone: 'haldi' as const,
+    },
+    {
+      id: 'mehandi',
+      kicker: 'Henna, music and dancing',
+      title: 'Mehandi & Sangeeth',
+      dateLabel: 'Wednesday, 25 November 2026',
+      dateISO: '2026-11-25',
+      timeLabel: '5:00 PM onwards',
+      start: '2026-11-25T17:00:00+05:30',
+      end: '2026-11-25T23:00:00+05:30',
+      blurb:
+        'Mehendi on hands, music in the air, dancing all evening. Wear your brightest colours.',
+      dressCode: 'Vibrant colours',
+      venueId: 'ashoka' as const,
+      icon: 'mehandi' as const,
+      tone: 'mehandi' as const,
+    },
     {
       id: 'reception',
       kicker: 'Join us for an evening of',
@@ -60,7 +118,10 @@ export const wedding = {
       start: '2026-11-26T19:15:00+05:30',
       end: '2026-11-26T23:00:00+05:30',
       blurb: 'A night of laughter, music and good food before the big day.',
+      dressCode: '',
+      venueId: 'main' as const,
       icon: 'sparkle' as const,
+      tone: 'rose' as const,
     },
     {
       id: 'muhurtha',
@@ -72,9 +133,19 @@ export const wedding = {
       start: '2026-11-27T09:20:00+05:30',
       end: '2026-11-27T10:00:00+05:30',
       blurb: 'The moment we tie the knot, surrounded by the people we love.',
+      dressCode: '',
+      venueId: 'main' as const,
       icon: 'ring' as const,
+      tone: 'sage' as const,
     },
   ],
+
+  /** The official celebration card, shown inside the events section. */
+  celebrationCard: {
+    src: 'celebration-card',
+    alt: 'Celebration card for the wedding of Kavya and Varun: Haldi on 25 November 2026 at 11:30 AM and Mehandi & Sangeeth at 5:00 PM, Ashoka Garden, Chitradurga',
+    caption: 'The celebration card',
+  },
 
   /** Countdown target — the muhurtha moment. */
   countdownTo: '2026-11-27T09:20:00+05:30',
@@ -96,6 +167,16 @@ export const wedding = {
 } as const;
 
 export type WeddingEvent = (typeof wedding.events)[number];
+
+/** Look an event up by id — sections reference events this way, not by index. */
+export function eventById(id: string): WeddingEvent {
+  return wedding.events.find((event) => event.id === id) ?? wedding.events[0];
+}
+
+/** The venue an event belongs to. */
+export function venueOf(event: WeddingEvent): Venue {
+  return venues[event.venueId];
+}
 
 export const galleryImages = [
   {

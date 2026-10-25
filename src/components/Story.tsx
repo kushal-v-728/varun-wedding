@@ -49,7 +49,7 @@ export function Story() {
         <LotusDivider className="invite-card__divider" />
 
         <p className="invite-card__date">
-          26 <span>·</span> 27 November <span>·</span> 2026
+          25 <span>·</span> 26 <span>·</span> 27 November <span>·</span> 2026
         </p>
         <p className="invite-card__venue">
           {wedding.venue.name}

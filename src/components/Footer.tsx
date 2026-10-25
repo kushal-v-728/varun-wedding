@@ -14,7 +14,7 @@ export function Footer() {
           {wedding.groom.shortName} &amp; {wedding.bride.shortName}
         </p>
         <LotusDivider />
-        <p className="footer__date">26 &amp; 27 November 2026 · Chitradurga, Karnataka</p>
+        <p className="footer__date">25 – 27 November 2026 · Chitradurga, Karnataka</p>
         <p className="footer__hash">{wedding.hashtag}</p>
         <p className="footer__made">
           Made with <HeartIcon /> for our people
